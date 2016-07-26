@@ -1,6 +1,6 @@
 package com.ginda.common.validation.checker;
 
-import junit.framework.Assert;
+import com.ginda.common.validation.Validator;
 import org.junit.Test;
 
 /**
@@ -11,12 +11,10 @@ public class DemoCheckerTest {
     @Test
     public void testValidate() throws Exception {
         DemoBean demoBean = new DemoBean();
-        Assert.assertEquals(DemoChecker.validate(demoBean), "用户名不能为空");
-
-        demoBean.setUserName("userName");
-        Assert.assertEquals(DemoChecker.validate(demoBean), "密码不能为空");
-
-        demoBean.setPassword("password");
-        Assert.assertNull(DemoChecker.validate(demoBean));
+        demoBean.setUserName("admin");
+        demoBean.setPassword("12345");
+        demoBean.setBirthdate("1986-04-01");
+        demoBean.setEmail("zengyintian@163.com");
+        Validator.validate(demoBean);
     }
 }

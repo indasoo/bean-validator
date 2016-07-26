@@ -1,6 +1,7 @@
 package com.ginda.common.validation.checker;
 
-import com.ginda.common.validation.annotation.RequiredValidator;
+import com.ginda.common.validation.RegexType;
+import com.ginda.common.validation.annotation.DataValue;
 
 /**
  * Created by Ginda.Tseng on 2016/7/22.
@@ -8,12 +9,20 @@ import com.ginda.common.validation.annotation.RequiredValidator;
 public class DemoBean {
 
     /* 用户名 */
-    @RequiredValidator(required = true, description = "用户名不能为空")
+    @DataValue(name = "用户名", required = true, valueRangeEnumClazz = UserNameEnum.class, valueRangeEnumMethod = "code")
     private String userName;
 
     /* 密码 */
-    @RequiredValidator(required = true, description = "密码不能为空")
+    @DataValue(name = "密码", required = true, minLength = 4, maxLength = 5)
     private String password;
+
+    /* 生日 */
+    @DataValue(name = "生日", regexExpression = "\\d{4}-\\d{2}-\\d{2}")
+    private String birthdate;
+
+    /* 邮件地址 */
+    @DataValue(name = "邮件地址", regexType = RegexType.EMAIL)
+    private String email;
 
     public String getUserName() {
         return userName;
@@ -29,5 +38,21 @@ public class DemoBean {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
