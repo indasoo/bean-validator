@@ -24,6 +24,10 @@ public class DemoBean {
     @DataValue(name = "邮件地址", regexType = RegexType.EMAIL)
     private String email;
 
+    /* 年龄 */
+    @DataValue(name = "年龄", required = true, minLength = 1, maxLength = 2, valueRangeEnumClazz = AgeEnum.class, valueRangeEnumMethod = "code")
+    private int age;
+
     public String getUserName() {
         return userName;
     }
@@ -54,5 +58,13 @@ public class DemoBean {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }

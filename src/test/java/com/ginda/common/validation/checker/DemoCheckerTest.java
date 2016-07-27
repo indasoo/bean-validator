@@ -15,6 +15,7 @@ public class DemoCheckerTest {
         demoBean.setPassword("12345");
         demoBean.setBirthdate("1986-04-01");
         demoBean.setEmail("zengyintian@163.com");
+        demoBean.setAge(2);
         Validator.validate(demoBean);
     }
 }
