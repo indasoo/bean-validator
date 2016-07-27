@@ -3,6 +3,7 @@ package com.ginda.common.validation;
 import com.ginda.common.validation.annotation.DataValue;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public class Validator {
      * @param Obj 数据
      * @throws ValidatorException 数据检验异常
      */
-    public static void validate(Object Obj) throws ValidatorException, Exception {
+    public static void validate(Object Obj) throws ValidatorException {
 
         Field[] fields = Obj.getClass().getDeclaredFields();
         for (Field field : fields) {
@@ -28,37 +29,60 @@ public class Validator {
 
                 DataValue dateValue = field.getAnnotation(DataValue.class);
 
-                Object value = field.get(Obj);
+                Object value = null;
+                try {
+                    value = field.get(Obj);
+                } catch (IllegalAccessException e) {
+                    new ValidatorException(e.getMessage());
+                }
 
+                // 值为空时，进行必要性检查，否则进行数据验证
                 if (value == null) {
                     // 是否必要检查
                     if (dateValue.required()) {
                         throw new ValidatorException(dateValue.name() + "不能为空");
                     }
                 } else {
-                    if (dateValue.minLength() != 0 && value.toString().length() < dateValue.minLength()) {
+                    String strValue = String.valueOf(value);
+                    // 长度检查
+                    if (dateValue.minLength() != 0 && strValue.length() < dateValue.minLength()) {
                         throw new ValidatorException(dateValue.name() + "长度不能小于" + dateValue.minLength());
                     }
 
-                    if (dateValue.maxLength() != 0 && value.toString().length() > dateValue.maxLength()) {
+                    if (dateValue.maxLength() != Integer.MAX_VALUE && strValue.length() > dateValue.maxLength()) {
                         throw new ValidatorException(dateValue.name() + "长度不能超过" + dateValue.maxLength());
                     }
 
-                    if (!"".equals(dateValue.regexExpression()) && !Pattern.matches(dateValue.regexExpression(), value.toString())) {
-                        throw new ValidatorException(dateValue.name() + "格式不正确");
-                    }
-
+                    // 数据类型验证
                     if (dateValue.regexType() != RegexType.NONE) {
-                        if (!Pattern.matches(dateValue.regexType().regex(), value.toString())) {
+                        if (!Pattern.matches(dateValue.regexType().regex(), strValue)) {
                             throw new ValidatorException(dateValue.name() + "格式不正确");
                         }
                     }
 
+                    // 自定义正则表达式验证
+                    if (!"".equals(dateValue.regexExpression()) && !Pattern.matches(dateValue.regexExpression(), strValue)) {
+                        throw new ValidatorException(dateValue.name() + "格式不正确");
+                    }
+
+                    // 值域验证
                     if (dateValue.valueRangeEnumClazz() != DataValue.EnumClazz.class) {
                         boolean isExist = false;
-                        Method method = dateValue.valueRangeEnumClazz().getMethod(dateValue.valueRangeEnumMethod());
+                        Method method = null;
+                        try {
+                            method = dateValue.valueRangeEnumClazz().getMethod(dateValue.valueRangeEnumMethod());
+                        } catch (NoSuchMethodException e) {
+                            new ValidatorException(e.getMessage());
+                        }
                         for (Enum item : (dateValue.valueRangeEnumClazz().getEnumConstants())) {
-                            Object obj = method.invoke(item);
+                            Object obj = null;
+                            try {
+                                obj = method.invoke(item);
+                            } catch (IllegalAccessException e) {
+                                new ValidatorException(e.getMessage());
+                            } catch (InvocationTargetException e) {
+                                new ValidatorException(e.getMessage());
+                            }
 
                             if (obj.equals(value)) {
                                 isExist = true;
