@@ -1,12 +1,9 @@
-package com.ginda.common.validation.checker;
-
-import com.ginda.common.validation.RegexType;
-import com.ginda.common.validation.ValidateData;
+package com.ginda.common.validation;
 
 /**
- * Created by Ginda.Tseng on 2016/7/22.
+ * Created by Ginda.Tseng on 2016/7/28.
  */
-public class DemoBean {
+public class ValidateBean {
 
     /* 用户名 */
     @ValidateData(name = "用户名", required = true, valueRangeEnumClazz = UserNameEnum.class, valueRangeEnumMethod = "code")
@@ -17,16 +14,20 @@ public class DemoBean {
     private String password;
 
     /* 生日 */
-    @ValidateData(name = "生日", regexExpression = "\\d{4}-\\d{2}-\\d{2}")
+    @ValidateData(name = "生日", regexExpression = "\\d{4}-\\d{2}-\\d{2}", regexType = RegexType.DATE_HYPHEN)
     private String birthdate;
 
     /* 邮件地址 */
-    @ValidateData(name = "邮件地址", regexType = RegexType.EMAIL)
+    @ValidateData(name = "邮件地址", required = false)
     private String email;
 
-    /* 年龄 */
-    @ValidateData(name = "年龄", required = true, minLength = 1, maxLength = 2, valueRangeEnumClazz = AgeEnum.class, valueRangeEnumMethod = "code")
-    private int age;
+    /* 类型 */
+    @ValidateData(name = "类型", required = true, minLength = 1, maxLength = 2, valueRangeEnumClazz = TypeEnum.class, valueRangeEnumMethod = "code")
+    private int type;
+
+    /* 关联数据 */
+    @ValidateData(name = "关联数据", required = false)
+    private ValidateBean data;
 
     public String getUserName() {
         return userName;
@@ -60,11 +61,19 @@ public class DemoBean {
         this.email = email;
     }
 
-    public int getAge() {
-        return age;
+    public int getType() {
+        return type;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public ValidateBean getData() {
+        return data;
+    }
+
+    public void setData(ValidateBean data) {
+        this.data = data;
     }
 }

@@ -1,9 +1,9 @@
-package com.ginda.common.validation.checker;
+package com.ginda.common.validation;
 
 /**
  * Created by Ginda.Tseng on 2016/7/26.
  */
-public enum AgeEnum {
+public enum TypeEnum {
 
     //用户角色类型
     AGE_1(1, "admin"),
@@ -16,7 +16,7 @@ public enum AgeEnum {
     /** 描述 */
     private String description;
 
-    AgeEnum(int code, String description){
+    TypeEnum(int code, String description){
         this.code = code;
         this.description = description;
     }

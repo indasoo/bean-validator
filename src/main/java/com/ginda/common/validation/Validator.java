@@ -43,65 +43,88 @@ public class Validator {
                         throw new ValidatorException(validateData.name() + "不能为空");
                     }
                 } else {
-                    String strValue = String.valueOf(value);
+                    if (!isWrapClassData(value)) {
+                        Validator.validate(value);
+                    } else {
+                        String strValue = String.valueOf(value);
 
-                    // 常量值检查
-                    if (StringUtils.isNotEmpty(validateData.constantValue())
-                            && !StringUtils.equals(validateData.constantValue(), strValue)) {
-                        throw new ValidatorException(validateData.name() + "与约定值不一致");
-                    }
+                        // 常量值检查
+                        if (StringUtils.isNotEmpty(validateData.constantValue())
+                                && !StringUtils.equals(validateData.constantValue(), strValue)) {
+                            throw new ValidatorException(validateData.name() + "与约定值不一致");
+                        }
 
-                    // 长度检查
-                    if (validateData.minLength() != 0 && strValue.length() < validateData.minLength()) {
-                        throw new ValidatorException(validateData.name() + "长度不能小于" + validateData.minLength());
-                    }
+                        // 长度检查
+                        if (validateData.minLength() != 0 && strValue.length() < validateData.minLength()) {
+                            throw new ValidatorException(validateData.name() + "长度不能小于" + validateData.minLength());
+                        }
 
-                    if (validateData.maxLength() != Integer.MAX_VALUE && strValue.length() > validateData.maxLength()) {
-                        throw new ValidatorException(validateData.name() + "长度不能超过" + validateData.maxLength());
-                    }
+                        if (validateData.maxLength() != Integer.MAX_VALUE && strValue.length() > validateData.maxLength()) {
+                            throw new ValidatorException(validateData.name() + "长度不能超过" + validateData.maxLength());
+                        }
 
-                    // 数据类型验证
-                    if (validateData.regexType() != RegexType.NONE) {
-                        if (!Pattern.matches(validateData.regexType().regex(), strValue)) {
+                        // 数据类型验证
+                        if (validateData.regexType() != RegexType.NONE) {
+                            if (!Pattern.matches(validateData.regexType().regex(), strValue)) {
+                                throw new ValidatorException(validateData.name() + "格式不正确");
+                            }
+                        }
+
+                        // 自定义正则表达式验证
+                        if (StringUtils.isNotEmpty(validateData.regexExpression()) && !Pattern.matches(validateData.regexExpression(), strValue)) {
                             throw new ValidatorException(validateData.name() + "格式不正确");
                         }
-                    }
 
-                    // 自定义正则表达式验证
-                    if (StringUtils.isNotEmpty(validateData.regexExpression()) && !Pattern.matches(validateData.regexExpression(), strValue)) {
-                        throw new ValidatorException(validateData.name() + "格式不正确");
-                    }
-
-                    // 值域验证
-                    if (validateData.valueRangeEnumClazz() != ValidateData.EnumClazz.class) {
-                        boolean isExist = false;
-                        Method method = null;
-                        try {
-                            method = validateData.valueRangeEnumClazz().getMethod(validateData.valueRangeEnumMethod());
-                        } catch (NoSuchMethodException e) {
-                            new ValidatorException(e.getMessage());
-                        }
-                        for (Enum item : (validateData.valueRangeEnumClazz().getEnumConstants())) {
-                            Object obj = null;
+                        // 值域验证
+                        if (validateData.valueRangeEnumClazz() != ValidateData.EnumClazz.class) {
+                            boolean isExist = false;
+                            Method method = null;
                             try {
-                                obj = method.invoke(item);
-                            } catch (IllegalAccessException e) {
-                                new ValidatorException(e.getMessage());
-                            } catch (InvocationTargetException e) {
+                                method = validateData.valueRangeEnumClazz().getMethod(validateData.valueRangeEnumMethod());
+                            } catch (NoSuchMethodException e) {
                                 new ValidatorException(e.getMessage());
                             }
+                            for (Enum item : (validateData.valueRangeEnumClazz().getEnumConstants())) {
+                                Object obj = null;
+                                try {
+                                    obj = method.invoke(item);
+                                } catch (IllegalAccessException e) {
+                                    new ValidatorException(e.getMessage());
+                                } catch (InvocationTargetException e) {
+                                    new ValidatorException(e.getMessage());
+                                }
 
-                            if (obj.equals(value)) {
-                                isExist = true;
+                                if (obj.equals(value)) {
+                                    isExist = true;
+                                }
                             }
-                        }
 
-                        if (!isExist) {
-                            throw new ValidatorException(validateData.name() + "不合法");
+                            if (!isExist) {
+                                throw new ValidatorException(validateData.name() + "不合法");
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    /**
+     * 检查是否为基本类型数据
+     * @param data 待检查数据
+     * @return 检查结果
+     */
+    public static boolean isWrapClassData(Object data) {
+
+        return data instanceof String
+                || data instanceof Byte
+                || data instanceof Short
+                || data instanceof Integer
+                || data instanceof Long
+                || data instanceof Float
+                || data instanceof Double
+                || data instanceof Character
+                || data instanceof Boolean
+                ;
     }
 }
