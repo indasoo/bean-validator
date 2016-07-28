@@ -1,6 +1,4 @@
-package com.ginda.common.validation.annotation;
-
-import com.ginda.common.validation.RegexType;
+package com.ginda.common.validation;
 
 import java.lang.annotation.*;
 
@@ -9,13 +7,16 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DataValue {
+public @interface ValidateData {
 
     /* 字段名称 */
     String name() default "";
 
     /* 是否必须 */
     boolean required() default false;
+
+    /* 常量值 */
+    String constantValue() default "";
 
     /* 最小长度 */
     int minLength() default 0;

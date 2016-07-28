@@ -1,7 +1,7 @@
 package com.ginda.common.validation.checker;
 
 import com.ginda.common.validation.RegexType;
-import com.ginda.common.validation.annotation.DataValue;
+import com.ginda.common.validation.ValidateData;
 
 /**
  * Created by Ginda.Tseng on 2016/7/22.
@@ -9,23 +9,23 @@ import com.ginda.common.validation.annotation.DataValue;
 public class DemoBean {
 
     /* 用户名 */
-    @DataValue(name = "用户名", required = true, valueRangeEnumClazz = UserNameEnum.class, valueRangeEnumMethod = "code")
+    @ValidateData(name = "用户名", required = true, valueRangeEnumClazz = UserNameEnum.class, valueRangeEnumMethod = "code")
     private String userName;
 
     /* 密码 */
-    @DataValue(name = "密码", required = true, minLength = 4, maxLength = 5)
+    @ValidateData(name = "密码", required = true, minLength = 4, maxLength = 5)
     private String password;
 
     /* 生日 */
-    @DataValue(name = "生日", regexExpression = "\\d{4}-\\d{2}-\\d{2}")
+    @ValidateData(name = "生日", regexExpression = "\\d{4}-\\d{2}-\\d{2}")
     private String birthdate;
 
     /* 邮件地址 */
-    @DataValue(name = "邮件地址", regexType = RegexType.EMAIL)
+    @ValidateData(name = "邮件地址", regexType = RegexType.EMAIL)
     private String email;
 
     /* 年龄 */
-    @DataValue(name = "年龄", required = true, minLength = 1, maxLength = 2, valueRangeEnumClazz = AgeEnum.class, valueRangeEnumMethod = "code")
+    @ValidateData(name = "年龄", required = true, minLength = 1, maxLength = 2, valueRangeEnumClazz = AgeEnum.class, valueRangeEnumMethod = "code")
     private int age;
 
     public String getUserName() {
