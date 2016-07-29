@@ -1,4 +1,4 @@
-package com.ginda.common.validation;
+package com.ginda.validation;
 
 import org.junit.Assert;
 import org.junit.Test;

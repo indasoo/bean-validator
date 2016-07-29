@@ -1,4 +1,4 @@
-package com.ginda.common.validation;
+package com.ginda.validation;
 
 /**
  * Created by Ginda.Tseng on 2016/7/26.

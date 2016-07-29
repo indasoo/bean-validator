@@ -1,4 +1,4 @@
-package com.ginda.common.validation;
+package com.ginda.validation;
 
 /**
  * 常用的数据类型枚举
